@@ -1,0 +1,61 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - ElectroTech{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Shopping cart</h1>
+
+{% if cart_items %}
+<div class="table-responsive shadow-sm bg-white rounded-3">
+    <table class="table align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" width="72" height="54" class="rounded object-fit-cover">
+                        <div>
+                            <a href="{{ item.product.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ item.product.name }}</a>
+                            <div class="small text-muted">{{ item.product.category.name }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${{ item.product.price }}</td>
+                <td>
+                    <form method="post" action="{% url 'store:update_cart' item.product.id %}" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" class="form-control form-control-sm" style="width: 80px;" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}">
+                        <button class="btn btn-sm btn-outline-primary" type="submit">Update</button>
+                    </form>
+                </td>
+                <td class="fw-semibold">${{ item.total_price }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-danger" href="{% url 'store:remove_from_cart' item.product.id %}">Remove</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-3">
+    <a href="{% url 'store:product_list' %}" class="btn btn-outline-secondary">Continue shopping</a>
+    <div class="text-end">
+        <p class="h4 mb-3">Grand total: ${{ grand_total }}</p>
+        <a href="{% url 'store:checkout' %}" class="btn btn-success btn-lg">Proceed to checkout</a>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">Your cart is empty. <a href="{% url 'store:product_list' %}">Browse products</a>.</div>
+{% endif %}
+{% endblock %}

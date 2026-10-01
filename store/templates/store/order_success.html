@@ -1,0 +1,28 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order Placed Successfully - ElectroTech{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                <h1 class="h3 mt-3">Thank you, {{ order.customer_name|default:"customer" }}</h1>
+                <p class="text-muted">Your order <strong>#{{ order.id }}</strong> has been received and is {{ order.status|lower }}.</p>
+                <p class="small">Transaction ID: {{ order.transaction_id }}</p>
+                <p class="h5">Total paid: ${{ order.get_cart_total }}</p>
+                <ul class="list-group text-start my-4">
+                    {% for item in order.orderitem_set.all %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                        <span>${{ item.get_total }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a class="btn btn-primary" href="{% url 'store:product_list' %}">Back to shop</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

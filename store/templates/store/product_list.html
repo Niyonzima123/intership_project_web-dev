@@ -1,0 +1,81 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{% if category %}{{ category.name }}{% else %}Catalog{% endif %} - ElectroTech Store{% endblock %}
+
+{% block content %}
+{% if not category and not query %}
+<section class="hero-banner rounded-4 p-4 p-md-5 mb-4 text-white">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <p class="text-uppercase small mb-2 opacity-75">Premium electronics</p>
+            <h1 class="display-5 fw-bold mb-3">Shop phones, laptops, and audio gear</h1>
+            <p class="lead mb-4">Compare prices, filter by category, and ask ElectroBot if you need help finding a device.</p>
+            <a class="btn btn-light btn-lg" href="#catalog">Browse catalog</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if featured_products and not category and not query %}
+<h2 class="h4 mb-3">Featured devices</h2>
+<div class="row g-4 mb-5">
+    {% for product in featured_products %}
+    <div class="col-sm-6 col-lg-3">
+        {% include 'store/includes/product_card.html' %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="row" id="catalog">
+    <aside class="col-lg-3 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-semibold">Categories</div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action {% if not category %}active{% endif %}" href="{% url 'store:product_list' %}">All products</a>
+                {% for cat in categories %}
+                <a class="list-group-item list-group-item-action {% if category.id == cat.id %}active{% endif %}" href="{{ cat.get_absolute_url }}">
+                    {{ cat.name }}
+                    <span class="badge text-bg-light float-end">{{ cat.products.count }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </aside>
+
+    <div class="col-lg-9">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h2 class="h4 mb-0">
+                {% if category %}{{ category.name }}{% elif query %}Results for "{{ query }}"{% else %}All electronics{% endif %}
+            </h2>
+            <form method="get" class="d-flex align-items-center gap-2">
+                {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                <label class="form-label mb-0 small text-muted">Sort</label>
+                <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="" {% if not sort_by %}selected{% endif %}>Featured</option>
+                    <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
+                </select>
+            </form>
+        </div>
+
+        {% if category and category.description %}
+        <p class="text-muted">{{ category.description }}</p>
+        {% endif %}
+
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-sm-6 col-xl-4">
+                {% include 'store/includes/product_card.html' %}
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No products found. Try another search or category.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

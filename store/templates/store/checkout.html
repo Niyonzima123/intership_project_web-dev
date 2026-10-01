@@ -1,0 +1,78 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - ElectroTech{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Checkout</h1>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Shipping details</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.full_name.id_for_label }}">Full name</label>
+                            {{ form.full_name }}
+                            {{ form.full_name.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+                            {{ form.email }}
+                            {{ form.email.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.phone.id_for_label }}">Phone</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.address.id_for_label }}">Address</label>
+                            {{ form.address }}
+                            {{ form.address.errors }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.city.id_for_label }}">City</label>
+                            {{ form.city }}
+                            {{ form.city.errors }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.state.id_for_label }}">State / County</label>
+                            {{ form.state }}
+                            {{ form.state.errors }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.zipcode.id_for_label }}">Zip code</label>
+                            {{ form.zipcode }}
+                            {{ form.zipcode.errors }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg mt-4">Place order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Order summary</h2>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for item in cart_items %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                        <strong>${{ item.total_price }}</strong>
+                    </li>
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total</span>
+                        <strong>${{ grand_total }}</strong>
+                    </li>
+                </ul>
+                <p class="small text-muted mb-0">This demo checkout records the order in SQLite. Pay on delivery.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

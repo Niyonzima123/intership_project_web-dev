@@ -1,0 +1,31 @@
+{% load static %}
+<div class="card product-card h-100 shadow-sm">
+    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+        <div class="product-img-wrap">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid">
+        </div>
+        <div class="card-body">
+            <p class="small text-muted mb-1">{{ product.category.name }}{% if product.brand %} · {{ product.brand }}{% endif %}</p>
+            <h3 class="h6 card-title">{{ product.name }}</h3>
+            <p class="fw-bold text-primary mb-2">${{ product.price }}</p>
+            {% if product.in_stock %}
+            <span class="badge text-bg-success">In stock ({{ product.stock }})</span>
+            {% else %}
+            <span class="badge text-bg-secondary">Out of stock</span>
+            {% endif %}
+        </div>
+    </a>
+    <div class="card-footer bg-white border-0 pb-3">
+        {% if product.in_stock %}
+        <form method="post" action="{% url 'store:add_to_cart' product.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="btn btn-primary w-100 btn-sm">
+                <i class="bi bi-cart-plus"></i> Add to cart
+            </button>
+        </form>
+        {% else %}
+        <button class="btn btn-outline-secondary w-100 btn-sm" disabled>Unavailable</button>
+        {% endif %}
+    </div>
+</div>
